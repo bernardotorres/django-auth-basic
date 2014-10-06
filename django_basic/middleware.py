@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with django-basic.  If not, see <http://www.gnu.org/licenses/>.
 
+import base64
+from django.contrib.auth import login, authenticate
 from django_basic import HttpBasicAuthenticator, HttpResponseUnauthorized
 
 # Uses the HttpBasicAuthenticator to enforce HTTP basic authentication for
@@ -24,7 +26,7 @@ from django_basic import HttpBasicAuthenticator, HttpResponseUnauthorized
 class HttpBasicMiddleware(object):
     def process_request(self, request):
         if request.user.is_authenticated():
-            return view(request, *args, **kwargs)
+            return 
         auth = request.META.get('HTTP_AUTHORIZATION')
         if auth:
             auth = auth.split()
@@ -33,14 +35,10 @@ class HttpBasicMiddleware(object):
                 user = authenticate(username=username, password=password)
                 if user is not None and user.is_active:
                     login(request, user)
-                    return view(request, *args, **kwargs)
+                    return
         response = HttpResponseUnauthorized()
         response['WWW-Authenticate'] = 'Basic realm="%s"' % realm
         return response
-
-    def process_response(self, request, response):
-        return None
-
 
 class HttpMultipleMiddleware(object):
     def __init__(self, *components):
