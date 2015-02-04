@@ -24,6 +24,8 @@ from django_basic import HttpBasicAuthenticator, HttpResponseUnauthorized
 # an entire application.
 
 class HttpBasicMiddleware(object):
+    realm = "Auth"
+        
     def process_request(self, request):
         if request.user.is_authenticated():
             return 
@@ -37,7 +39,7 @@ class HttpBasicMiddleware(object):
                     login(request, user)
                     return
         response = HttpResponseUnauthorized()
-        response['WWW-Authenticate'] = 'Basic realm="%s"' % realm
+        response['WWW-Authenticate'] = 'Basic realm="%s"' % self.realm
         return response
 
 class HttpMultipleMiddleware(object):
